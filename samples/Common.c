@@ -312,10 +312,10 @@ BOOL sampleFilterNetworkInterfaces(UINT64 customData, PCHAR networkInt)
 {
     UNUSED_PARAM(customData);
     BOOL useInterface = FALSE;
-    if (STRNCMP(networkInt, (PCHAR) "eth0", ARRAY_SIZE("eth0")) == 0) {
+    if (STRNCMP(networkInt, (PCHAR) "en0", ARRAY_SIZE("en0")) == 0) {
         useInterface = TRUE;
     }
-    DLOGD("%s %s", networkInt, (useInterface) ? ("allowed. Candidates to be gathered") : ("blocked. Candidates will not be gathered"));
+    DLOGI("%s %s", networkInt, (useInterface) ? ("allowed. Candidates to be gathered") : ("blocked. Candidates will not be gathered"));
     return useInterface;
 }
 
@@ -371,7 +371,7 @@ STATUS initializePeerConnection(PSampleConfiguration pSampleConfiguration, PRtcP
     MEMSET(&configuration, 0x00, SIZEOF(RtcConfiguration));
 
     // Set this to custom callback to enable filtering of interfaces
-    configuration.kvsRtcConfiguration.iceSetInterfaceFilterFunc = NULL;
+    configuration.kvsRtcConfiguration.iceSetInterfaceFilterFunc = sampleFilterNetworkInterfaces;
 
     // Set the ICE mode explicitly
     configuration.iceTransportPolicy = ICE_TRANSPORT_POLICY_ALL;

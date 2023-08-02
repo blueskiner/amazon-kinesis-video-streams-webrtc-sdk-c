@@ -149,6 +149,7 @@ VOID onInboundPacket(UINT64 customData, PBYTE buff, UINT32 buffLen)
                 CHK_STATUS(allocateSctp(pKvsPeerConnection));
             }
 #endif
+            DLOGI("Connected on inbound");
             changePeerConnectionState(pKvsPeerConnection, RTC_PEER_CONNECTION_STATE_CONNECTED);
         }
 
@@ -440,6 +441,7 @@ VOID onIceConnectionStateChange(UINT64 customData, UINT64 connectionState)
     if (startDtlsSession) {
         CHK_STATUS(dtlsSessionIsInitFinished(pKvsPeerConnection->pDtlsSession, &dtlsConnected));
         if (dtlsConnected) {
+            DLOGI("Connected here");
             // In ICE restart scenario, DTLS handshake is not going to be reset. Therefore, we need to check
             // if the DTLS state has been connected.
             newConnectionState = RTC_PEER_CONNECTION_STATE_CONNECTED;

@@ -42,7 +42,7 @@ STATUS dtlsTransmissionTimerCallback(UINT32 timerID, UINT64 currentTime, UINT64 
     LONG dtlsTimeoutRet = 0;
 
     CHK(pDtlsSession != NULL, STATUS_NULL_ARG);
-
+    DLOGI("Timer invocation");
     MEMSET(&timeout, 0x00, SIZEOF(struct timeval));
 
     MUTEX_LOCK(pDtlsSession->sslLock);
@@ -148,6 +148,21 @@ CleanUp:
     return retStatus;
 }
 
+VOID infoCallback(const SSL *ssl, int where, int ret) {
+    PDtlsSession pDtlsSession = SSL_get_app_data(ssl);
+    if (where & SSL_CB_HANDSHAKE_DONE) {
+        DLOGI("DTLS Handshake completed successfully!");
+        if(IS_VALID_TIMER_QUEUE_HANDLE(pDtlsSession->timerQueueHandle)) {
+            CHK_LOG_ERR(timerQueueCancelTimer(pDtlsSession->timerQueueHandle, pDtlsSession->timerId,
+                                              (UINT64) pDtlsSession));
+            pDtlsSession->timerId = MAX_UINT32;
+        }
+        dtlsSessionChangeState(pDtlsSession, RTC_DTLS_TRANSPORT_STATE_CONNECTED);
+        ATOMIC_STORE_BOOL(&pDtlsSession->sslInitFinished, TRUE);
+        // You can set a flag or perform any required action here.
+    }
+}
+
 STATUS createSslCtx(PDtlsSessionCertificateInfo pCertificates, UINT32 certCount, SSL_CTX** ppSslCtx)
 {
     ENTERS();
@@ -209,7 +224,7 @@ CleanUp:
     return retStatus;
 }
 
-STATUS createSsl(SSL_CTX* pSslCtx, SSL** ppSsl)
+STATUS createSsl(PDtlsSession pDtlsSession, SSL_CTX* pSslCtx, SSL** ppSsl)
 {
     ENTERS();
     STATUS retStatus = STATUS_SUCCESS;
@@ -226,6 +241,8 @@ STATUS createSsl(SSL_CTX* pSslCtx, SSL** ppSsl)
     BIO_set_mem_eof_return(pReadBIO, -1);
     BIO_set_mem_eof_return(pWriteBIO, -1);
     SSL_set_bio(pSsl, pReadBIO, pWriteBIO);
+    SSL_set_app_data(pSsl, pDtlsSession);
+    SSL_set_info_callback(pSsl, infoCallback);
     freeBios = FALSE;
 
     *ppSsl = pSsl;
@@ -313,7 +330,7 @@ STATUS createDtlsSession(PDtlsSessionCallbacks pDtlsSessionCallbacks, TIMER_QUEU
     }
 
     CHK_STATUS(createSslCtx(certInfos, pDtlsSession->certificateCount, &pDtlsSession->pSslCtx));
-    CHK_STATUS(createSsl(pDtlsSession->pSslCtx, &pDtlsSession->pSsl));
+    CHK_STATUS(createSsl(pDtlsSession, pDtlsSession->pSslCtx, &pDtlsSession->pSsl));
 
     // Generate and store the certificate fingerprints
     CHK_STATUS(dtlsGenerateCertificateFingerprints(pDtlsSession, certInfos));
@@ -377,8 +394,10 @@ STATUS dtlsSessionStart(PDtlsSession pDtlsSession, BOOL isServer)
     ATOMIC_STORE_BOOL(&pDtlsSession->isStarted, TRUE);
 
     if (isServer) {
+        DLOGI("Running as server");
         SSL_set_accept_state(pDtlsSession->pSsl);
     } else {
+        DLOGI("Running as client");
         SSL_set_connect_state(pDtlsSession->pSsl);
     }
     sslRet = SSL_do_handshake(pDtlsSession->pSsl);
@@ -455,7 +474,6 @@ STATUS dtlsSessionProcessPacket(PDtlsSession pDtlsSession, PBYTE pData, PINT32 p
     if (sslRet <= 0) {
         LOG_OPENSSL_ERROR("BIO_write");
     }
-
     // should clear error before SSL_read: https://stackoverflow.com/a/47218133
     ERR_clear_error();
     sslRet = SSL_read(pDtlsSession->pSsl, pData, *pDataLen);
@@ -568,7 +586,6 @@ STATUS dtlsCheckOutgoingDataBuffer(PDtlsSession pDtlsSession)
     pWriteBIO = SSL_get_wbio(pDtlsSession->pSsl);
     // proceed if write BIO is not empty
     CHK(BIO_ctrl_pending(pWriteBIO) > 0, retStatus);
-
     // BIO_read removes read data
     dataLenWritten = BIO_read(pWriteBIO, pDtlsSession->outgoingDataBuffer, ARRAY_SIZE(pDtlsSession->outgoingDataBuffer));
     if (dataLenWritten > 0) {
@@ -594,13 +611,13 @@ STATUS dtlsSessionIsInitFinished(PDtlsSession pDtlsSession, PBOOL pIsConnected)
 
     MUTEX_LOCK(pDtlsSession->sslLock);
     locked = TRUE;
-    *pIsConnected = SSL_is_init_finished(pDtlsSession->pSsl);
+    *pIsConnected = ATOMIC_LOAD_BOOL(&pDtlsSession->sslInitFinished);
 
     // The state change happens in the timer callback anyways. But the callback is invoked every
     // 200 ms, hence by the time the state change occurs, it could be 200ms later worst case.
     // This does not reduce any start up timing, but it helps in getting the accurate DTLS setup time
     if (*pIsConnected) {
-        dtlsSessionChangeState(pDtlsSession, RTC_DTLS_TRANSPORT_STATE_CONNECTED);
+        DLOGI("DTLS initialized...");
     }
 
 CleanUp:
