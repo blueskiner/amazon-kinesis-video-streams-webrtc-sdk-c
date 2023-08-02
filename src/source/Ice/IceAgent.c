@@ -88,13 +88,19 @@ STATUS createIceAgent(PCHAR username, PCHAR password, PIceAgentCallbacks pIceAge
 
     // Pre-allocate stun packets
 
-    // no other attribtues needed: https://tools.ietf.org/html/rfc8445#section-11
+    // no other attributes needed: https://tools.ietf.org/html/rfc8445#section-11
     CHK_STATUS(createStunPacket(STUN_PACKET_TYPE_BINDING_INDICATION, NULL, &pIceAgent->pBindingIndication));
     CHK_STATUS(hashTableCreateWithParams(ICE_HASH_TABLE_BUCKET_COUNT, ICE_HASH_TABLE_BUCKET_LENGTH, &pIceAgent->requestTimestampDiagnostics));
 
     pIceAgent->iceServersCount = 0;
     for (i = 0; i < MAX_ICE_SERVERS_COUNT; i++) {
         if (pRtcConfiguration->iceServers[i].urls[0] != '\0') {
+            if(pIceAgent->iceTransportPolicy == ICE_TRANSPORT_POLICY_RELAY) {
+                if(STRSTR(pRtcConfiguration->iceServers[i].urls, "stun:") != NULL) {
+                    // Adding this check ensures we do not wastefully DNS resolve a host we do not need to resolve
+                    continue;
+                }
+            }
             PROFILE_CALL_WITH_T_OBJ(
                 retStatus = parseIceServer(&pIceAgent->iceServers[pIceAgent->iceServersCount], (PCHAR) pRtcConfiguration->iceServers[i].urls,
                                            (PCHAR) pRtcConfiguration->iceServers[i].username, (PCHAR) pRtcConfiguration->iceServers[i].credential),
