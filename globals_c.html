@@ -150,6 +150,9 @@ $(document).ready(function(){initNavTree('globals_c.html',''); initResizable(); 
 <li>CODEC_HASH_TABLE_BUCKET_LENGTH
 : <a class="el" href="PeerConnection_8h.html#a2285baf450dcb102c456632b4c004598">PeerConnection.h</a>
 </li>
+<li>CODEC_RTPMAP_PAYLOAD_TYPES_HASH_TABLE_BUCKET_LENGTH
+: <a class="el" href="SessionDescription_8h.html#a75a9c9ab976b37df5e59e31d070d23fe">SessionDescription.h</a>
+</li>
 <li>computeCandidatePairPriority()
 : <a class="el" href="IceAgent_8c.html#aea82ec5c31f92655c535153ae0c9ed85">IceAgent.c</a>
 , <a class="el" href="IceAgent_8h.html#a310353b6a6ec17871308316b8c67bd90">IceAgent.h</a>
@@ -164,6 +167,10 @@ $(document).ready(function(){initNavTree('globals_c.html',''); initResizable(); 
 </li>
 <li>configureSctpSocket()
 : <a class="el" href="Sctp_8c.html#a55eca852bfcd8b72d9a2429a23d39886">Sctp.c</a>
+</li>
+<li>configureTransceiverRollingBuffer()
+: <a class="el" href="group__PublicMemberFunctions.html#gaad489bae7042ed76c8e26a213f7d9c0e">PeerConnection.c</a>
+, <a class="el" href="group__PublicMemberFunctions.html#gaad489bae7042ed76c8e26a213f7d9c0e">Include.h</a>
 </li>
 <li>CONNECTION_LISTENER_DEFAULT_MAX_LISTENING_CONNECTION
 : <a class="el" href="ConnectionListener_8h.html#ab3b552e6573c384bcd8e0da39992f964">ConnectionListener.h</a>
@@ -211,8 +218,8 @@ $(document).ready(function(){initNavTree('globals_c.html',''); initResizable(); 
 , <a class="el" href="Signaling_8h.html#a7bbc824772aa5da9ae0f0d32072624a5">Signaling.h</a>
 </li>
 <li>connectSignalingChannelLws()
-: <a class="el" href="LwsApiCalls_8c.html#ae1cea6c90bbf08edbab8a6e71231d41f">LwsApiCalls.c</a>
-, <a class="el" href="LwsApiCalls_8h.html#a2ac258834937856ede462e972c15869f">LwsApiCalls.h</a>
+: <a class="el" href="LwsApiCalls_8h.html#a2ac258834937856ede462e972c15869f">LwsApiCalls.h</a>
+, <a class="el" href="LwsApiCalls_8c.html#ae1cea6c90bbf08edbab8a6e71231d41f">LwsApiCalls.c</a>
 </li>
 <li>constructRetransmitRtpPacketFromBytes()
 : <a class="el" href="RtpPacket_8c.html#aa8208bbcf8f9f22873708986d8dcda55">RtpPacket.c</a>
@@ -270,20 +277,20 @@ $(document).ready(function(){initNavTree('globals_c.html',''); initResizable(); 
 , <a class="el" href="group__PublicMemberFunctions.html#ga70b9d70f77fae56f1a2f223cb3054416">DataChannel.c</a>
 </li>
 <li>createDtlsSession()
-: <a class="el" href="Dtls__openssl_8c.html#ac40bba1019de3e73a9006b12c9dc4eaa">Dtls_openssl.c</a>
-, <a class="el" href="Dtls_8h.html#ac281e5a858d8c8ef0df8b26768d0663b">Dtls.h</a>
+: <a class="el" href="Dtls_8h.html#ac281e5a858d8c8ef0df8b26768d0663b">Dtls.h</a>
+, <a class="el" href="Dtls__openssl_8c.html#ac40bba1019de3e73a9006b12c9dc4eaa">Dtls_openssl.c</a>
 , <a class="el" href="Dtls__mbedtls_8c.html#ac40bba1019de3e73a9006b12c9dc4eaa">Dtls_mbedtls.c</a>
 </li>
 <li>createFileIfNotExist()
 : <a class="el" href="FileCache_8c.html#aedcb1b57ddc166aa7ba97663ee7846bd">FileCache.c</a>
 </li>
 <li>createIceAgent()
-: <a class="el" href="IceAgent_8c.html#af2fe29241b2d4ab4997fe04c41534578">IceAgent.c</a>
-, <a class="el" href="IceAgent_8h.html#a8b4871fcabcb392bb37f78a0a1b129eb">IceAgent.h</a>
+: <a class="el" href="IceAgent_8h.html#a8b4871fcabcb392bb37f78a0a1b129eb">IceAgent.h</a>
+, <a class="el" href="IceAgent_8c.html#af2fe29241b2d4ab4997fe04c41534578">IceAgent.c</a>
 </li>
 <li>createIceCandidatePairs()
-: <a class="el" href="IceAgent_8c.html#ab4a5a8ab78cd23b15d19ef7a25da80ca">IceAgent.c</a>
-, <a class="el" href="IceAgent_8h.html#ab8082cc21804a13eee3f623b533e1fc3">IceAgent.h</a>
+: <a class="el" href="IceAgent_8h.html#ab8082cc21804a13eee3f623b533e1fc3">IceAgent.h</a>
+, <a class="el" href="IceAgent_8c.html#ab4a5a8ab78cd23b15d19ef7a25da80ca">IceAgent.c</a>
 </li>
 <li>createIOBuffer()
 : <a class="el" href="IOBuffer_8c.html#ab546267bacecbe0c2c65a2286df9dfc4">IOBuffer.c</a>
@@ -310,8 +317,8 @@ $(document).ready(function(){initNavTree('globals_c.html',''); initResizable(); 
 , <a class="el" href="RtpG711Payloader_8h.html#af2412a5b3be2e054853cdb79f9546783">RtpG711Payloader.h</a>
 </li>
 <li>createPayloadForH264()
-: <a class="el" href="RtpH264Payloader_8h.html#a24fb84011ee9c17c7f228b4ba8f4b265">RtpH264Payloader.h</a>
-, <a class="el" href="RtpH264Payloader_8c.html#a2e2a5fd1437d44a603302b83adae52b4">RtpH264Payloader.c</a>
+: <a class="el" href="RtpH264Payloader_8c.html#a2e2a5fd1437d44a603302b83adae52b4">RtpH264Payloader.c</a>
+, <a class="el" href="RtpH264Payloader_8h.html#a24fb84011ee9c17c7f228b4ba8f4b265">RtpH264Payloader.h</a>
 </li>
 <li>createPayloadForH265()
 : <a class="el" href="RtpH265Payloader_8c.html#a910239de87c38dd06b28be37cde973ec">RtpH265Payloader.c</a>
@@ -330,8 +337,8 @@ $(document).ready(function(){initNavTree('globals_c.html',''); initResizable(); 
 , <a class="el" href="RtpH264Payloader_8h.html#a1c39e524053e68f5a9dbabd7226c8f25">RtpH264Payloader.h</a>
 </li>
 <li>createPayloadFromNaluH265()
-: <a class="el" href="RtpH265Payloader_8c.html#a1ceb427dad9476058d0ade251a9af68f">RtpH265Payloader.c</a>
-, <a class="el" href="RtpH265Payloader_8h.html#a2cc7ce2c91591a1ea6d6600a9104a6c7">RtpH265Payloader.h</a>
+: <a class="el" href="RtpH265Payloader_8h.html#a2cc7ce2c91591a1ea6d6600a9104a6c7">RtpH265Payloader.h</a>
+, <a class="el" href="RtpH265Payloader_8c.html#a1ceb427dad9476058d0ade251a9af68f">RtpH265Payloader.c</a>
 </li>
 <li>createPeerConnection()
 : <a class="el" href="group__PublicMemberFunctions.html#gada972c66438c7e7c82e1db0cfe2b2640">Include.h</a>
@@ -440,7 +447,7 @@ $(document).ready(function(){initNavTree('globals_c.html',''); initResizable(); 
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Tue Oct 22 2024 08:06:22 for Amazon Kinesis Webrtc C SDK by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
+    <li class="footer">Generated on Thu Jan 9 2025 07:51:12 for Amazon Kinesis Webrtc C SDK by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1 </li>
   </ul>
 </div>
 </body>
